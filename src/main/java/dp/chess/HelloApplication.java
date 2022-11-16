@@ -20,12 +20,22 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
+    /**The Main Application method.
+     Create a Board and set pieces individually, clear the board, or reset.
+     */
     public static void main(String[] args) {
 
         Board b = new Board();
         Piece king = new Piece(true, PieceType.KING);
         b.setPiece('A', 1, king);
-        b.setPiece('H', 8, king);
+        Piece bPawn = new Piece(false, PieceType.PAWN);
+        Piece wPawn = new Piece(true, PieceType.PAWN);
+        b.setPiece('C', 2, wPawn);
+        b.setPiece('E', 4, wPawn);
+        b.setPiece('E', 5, bPawn);
+        b.setPiece('H', 4, bPawn);
+        System.out.println(b);
+        b.reset();
         System.out.println(b);
 
 //        launch();

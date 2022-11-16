@@ -5,10 +5,15 @@ public class Piece {
     private PieceType type;
     private char symbol;
 
-    public Piece (boolean b, PieceType pt) {
-        this.isWhite = b;
-        this.type = pt;
-        this.symbol = pt.name().charAt(0);
+    public Piece (boolean isWhite, PieceType pieceType) {
+        this.isWhite = isWhite;
+        this.type = pieceType;
+        if (pieceType == PieceType.KNIGHT) {
+            this.symbol = 'N';
+        }
+        else {
+            this.symbol = pieceType.name().charAt(0);
+        }
     }
 
     public String getTeam() {
