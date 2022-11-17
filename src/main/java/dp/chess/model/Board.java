@@ -73,13 +73,12 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             board[6][i].setPiece(new Piece(true, PAWN));
         }
-        checkSquares();
     }
 
     /**Check each square on the board, and if a piece is detected,
      call the calculate function for that piece. If no piece, do nothing.
      */
-    public void checkSquares() {
+    private void checkSquares() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece p = board[i][j].getPiece();
@@ -90,69 +89,149 @@ public class Board {
         }
     }
 
-    /**Calculate all possible moves of a piece and change the value of
-     reachable squares to indicate they are possible to reach. A square
-     is reachable if it falls within the movement of that piece and is
-     unoccupied. */
-    public void calculate(Piece p, int row, int col) {
+    /**Identify the piece type and call the appropriate calculate method for that piece.
+     @param p the Piece to calculate
+     @param row the integer representing the row position
+     @param col the integer representing the col position
+     */
+    private void calculate(Piece p, int row, int col) {
+
         if (p.getType() == KING) {
-            for (int i = row - 1; i <= row + 1; i++) {
-                // disregard rows not on the board
-                if (i >= 0 && i <= 7) {
-                    for (int j = col -1; j <= col + 1; j++) {
-                        // disregard cols not on board
-                        if (j >= 0 && j <= 7) {
-                            Square s = board[i][j];
-                            // if unoccupied, add value
-                            if (s.getPiece() == null) {
-                                s.addValue();
-                            }
+            calculateKing(row, col);
+        }
+
+        if (p.getType() == PAWN && (row <= 6 && row >= 1)) {
+            calculatePawn(p, row, col);
+        }
+
+        if (p.getType() == ROOK) {
+            calculateRook(row, col);
+        }
+
+    }
+
+    /**Calculate the possible moves of a Rook piece.
+     A rook can move any length horizontally or vertically (within its current
+     row or column) but it can only pick one direction to move, and cannot move
+     past an occupied space.
+     @param row the row location
+     @param col the col location
+     */
+    private void calculateRook(int row, int col) {
+        ArrayList<Square> squares = new ArrayList<>();
+        // check up
+        for (int i = row - 1; i >= 0; i--) {
+            // stop checking once a piece is encountered
+            Square s = board[i][col];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check down
+        for (int i = row + 1; i <= 7; i++) {
+            // stop checking once a piece is encountered
+            Square s = board[i][col];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check left
+        for (int i = col - 1; i >= 0; i--) {
+            // stop checking once a piece is encountered
+            Square s = board[row][i];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check right
+        for (int i = col + 1; i <= 7; i++) {
+            // stop checking once a piece is encountered
+            Square s = board[row][i];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // increment all squares collected
+        for (Square s : squares) {
+            s.addValue();
+        }
+    }
+
+    /**Calculate the possible moves of a King piece.
+     A king can move within a one square radius of its position.
+     @param row the int row location of the King
+     @param col the int col location of the King
+     */
+    private void calculateKing(int row, int col) {
+        for (int i = row - 1; i <= row + 1; i++) {
+            // disregard rows not on the board
+            if (i >= 0 && i <= 7) {
+                for (int j = col -1; j <= col + 1; j++) {
+                    // disregard cols not on board
+                    if (j >= 0 && j <= 7) {
+                        Square s = board[i][j];
+                        // if unoccupied, add value
+                        if (s.getPiece() == null) {
+                            s.addValue();
                         }
                     }
                 }
             }
         }
+    }
 
-        // only care about pawns that are not on edge
-        if (p.getType() == PAWN && (row <= 6 && row >= 1)) {
-            int reach = 1;
-            ArrayList<Square> squares = new ArrayList<>();
+    /**Calculate the possible moves of a Pawn piece.
+     A pawn can only move if located on rows 1-6 and there is no piece in its path.
+     A pawn at its starting location (row 1 for Black Pawn, row 6 White Pawn)
+     is able to move 2 spaces forward; otherwise it can move one space forward.
+     For a Black Pawn, forward indicates moving down the board (row ascending);
+     a White Pawn moves forward up the board (row descending).
+     @param p the Pawn to calculate
+     @param row the row location
+     @param col the col location
+     */
+    private void calculatePawn(Piece p, int row, int col) {
+        int reach = 1;
+        ArrayList<Square> squares = new ArrayList<>();
 
-            // white pan can only move up (row decreasing)
-            if (p.getTeam().equals("White")) {
-                // calculate reach (if starting position = 2, else =1)
-                if (row == 6) {
-                    reach = 2;
-                }
-                // gather squares within reach
-                for (int i = 1; i <= reach; i++) {
-                    Square s = board[row-i][col];
-                    if (s.getPiece() != null) {
-                        break;
-                    }
-                    squares.add(s);
-                }
+        // white pan can only move up (row decreasing)
+        if (p.getTeam().equals("White")) {
+            // calculate reach (if starting position = 2, else =1)
+            if (row == 6) {
+                reach = 2;
             }
-            // black pawn can only move down (row increasing)
-            else {
-                // calculate reach (if starting position = 2, else =1)
-                if (row == 1) {
-                    reach = 2;
+            // gather squares within reach
+            for (int i = 1; i <= reach; i++) {
+                Square s = board[row-i][col];
+                if (s.getPiece() != null) {
+                    break;
                 }
-                // gather squares within reach
-                for (int i = 1; i <= reach; i++) {
-                    Square s = board[row+i][col];
-                    if (s.getPiece() != null) {
-                        break;
-                    }
-                    squares.add(s);
-                }
+                squares.add(s);
             }
+        }
+        // black pawn can only move down (row increasing)
+        else {
+            // calculate reach (if starting position = 2, else =1)
+            if (row == 1) {
+                reach = 2;
+            }
+            // gather squares within reach
+            for (int i = 1; i <= reach; i++) {
+                Square s = board[row+i][col];
+                if (s.getPiece() != null) {
+                    break;
+                }
+                squares.add(s);
+            }
+        }
 
-            // increment squares
-            for (Square s : squares) {
-                s.addValue();
-            }
+        // increment squares
+        for (Square s : squares) {
+            s.addValue();
         }
     }
 
@@ -186,5 +265,11 @@ public class Board {
             count--;
         }
         return str.toString();
+    }
+
+    /**Calculate the board and print as a String.*/
+    public void showBoard() {
+        checkSquares();
+        System.out.println(this);
     }
 }

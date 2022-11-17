@@ -26,17 +26,16 @@ public class HelloApplication extends Application {
     public static void main(String[] args) {
 
         Board b = new Board();
-        Piece king = new Piece(true, PieceType.KING);
-        b.setPiece('A', 1, king);
-        Piece bPawn = new Piece(false, PieceType.PAWN);
-        Piece wPawn = new Piece(true, PieceType.PAWN);
-        b.setPiece('C', 2, wPawn);
-        b.setPiece('E', 4, wPawn);
-        b.setPiece('E', 5, bPawn);
-        b.setPiece('H', 4, bPawn);
-        System.out.println(b);
+        Piece pawn = new Piece(true, PieceType.PAWN);
+        Piece rook = new Piece(true, PieceType.ROOK);
+        b.setPiece('D', 6, pawn);
+        b.setPiece('D', 8, rook);
+        b.setPiece('A', 8, rook);
+        b.setPiece('E', 4, rook);
+        b.showBoard();
+
         b.reset();
-        System.out.println(b);
+        b.showBoard();
 
 //        launch();
     }
