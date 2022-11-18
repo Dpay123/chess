@@ -28,10 +28,9 @@ public class HelloApplication extends Application {
         Board b = new Board();
         Piece pawn = new Piece(true, PieceType.PAWN);
         Piece rook = new Piece(true, PieceType.ROOK);
-        b.setPiece('D', 6, pawn);
-        b.setPiece('D', 8, rook);
-        b.setPiece('A', 8, rook);
-        b.setPiece('E', 4, rook);
+        Piece bishop = new Piece(true, PieceType.BISHOP);
+        b.setPiece('A', 8, bishop);
+        b.setPiece('D', 5, bishop);
         b.showBoard();
 
         b.reset();

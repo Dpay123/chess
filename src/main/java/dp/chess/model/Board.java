@@ -108,6 +108,10 @@ public class Board {
             calculateRook(row, col);
         }
 
+        if (p.getType() == BISHOP) {
+            calculateBishop(row, col);
+        }
+
     }
 
     /**Calculate the possible moves of a Rook piece.
@@ -233,6 +237,67 @@ public class Board {
         for (Square s : squares) {
             s.addValue();
         }
+    }
+
+    /**Calculate the possible moves of a Bishop piece.
+     A bishop can move diagonally from its position, any distance where there
+     is no piece in its path, but it can only travel in one direction per move.
+     */
+    private void calculateBishop(int row, int col) {
+        // the flags to indicate whether a piece/board edge is encountered
+        boolean upLeftFlag = true;
+        boolean upRightFlag = true;
+        boolean downLeftFlag = true;
+        boolean downRightFlag = true;
+        // the radius being checked around the initial position
+        int radius = 1;
+        ArrayList<Square> squares = new ArrayList<>();
+
+        while (radius < 8) {
+
+            // check up left
+            if (upLeftFlag && row - radius >= 0 && col - radius >= 0) {
+                Square s = board[row-radius][col-radius];
+                if (s.getPiece() != null) {
+                    upLeftFlag = false;
+                } else {
+                    squares.add(s);
+                }
+            }
+            // check up right
+            if (upRightFlag && row - radius >= 0 && col + radius <= 7) {
+                Square s = board[row-radius][col+radius];
+                if (s.getPiece() != null) {
+                    upRightFlag = false;
+                } else {
+                    squares.add(s);
+                }
+            }
+            // check down left
+            if (downLeftFlag && row + radius <= 7 && col - radius >= 0) {
+                Square s = board[row+radius][col-radius];
+                if (s.getPiece() != null) {
+                    downLeftFlag = false;
+                } else {
+                    squares.add(s);
+                }
+            }
+            // check down right
+            if (downRightFlag && row + radius <= 7 && col + radius <= 7) {
+                Square s = board[row+radius][col+radius];
+                if (s.getPiece() != null) {
+                    downRightFlag = false;
+                } else {
+                    squares.add(s);
+                }
+            }
+            // step outward 1 square
+            radius++;
+        }
+        for (Square s : squares) {
+            s.addValue();
+        }
+
     }
 
     /**Set the piece to a square, given the row/col location of the square.
