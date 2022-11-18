@@ -112,57 +112,10 @@ public class Board {
             calculateBishop(row, col);
         }
 
-    }
+        if (p.getType() == QUEEN) {
+            calculateQueen(row, col);
+        }
 
-    /**Calculate the possible moves of a Rook piece.
-     A rook can move any length horizontally or vertically (within its current
-     row or column) but it can only pick one direction to move, and cannot move
-     past an occupied space.
-     @param row the row location
-     @param col the col location
-     */
-    private void calculateRook(int row, int col) {
-        ArrayList<Square> squares = new ArrayList<>();
-        // check up
-        for (int i = row - 1; i >= 0; i--) {
-            // stop checking once a piece is encountered
-            Square s = board[i][col];
-            if (s.getPiece() != null) {
-                break;
-            }
-            squares.add(s);
-        }
-        // check down
-        for (int i = row + 1; i <= 7; i++) {
-            // stop checking once a piece is encountered
-            Square s = board[i][col];
-            if (s.getPiece() != null) {
-                break;
-            }
-            squares.add(s);
-        }
-        // check left
-        for (int i = col - 1; i >= 0; i--) {
-            // stop checking once a piece is encountered
-            Square s = board[row][i];
-            if (s.getPiece() != null) {
-                break;
-            }
-            squares.add(s);
-        }
-        // check right
-        for (int i = col + 1; i <= 7; i++) {
-            // stop checking once a piece is encountered
-            Square s = board[row][i];
-            if (s.getPiece() != null) {
-                break;
-            }
-            squares.add(s);
-        }
-        // increment all squares collected
-        for (Square s : squares) {
-            s.addValue();
-        }
     }
 
     /**Calculate the possible moves of a King piece.
@@ -239,11 +192,12 @@ public class Board {
         }
     }
 
-    /**Calculate the possible moves of a Bishop piece.
-     A bishop can move diagonally from its position, any distance where there
-     is no piece in its path, but it can only travel in one direction per move.
+    /**Calculate possible moves diagonally from a position.
+     @param row the row location
+     @param col the col location
+     @return the list of squares that can be reached
      */
-    private void calculateBishop(int row, int col) {
+    private ArrayList<Square> calculateDiagonals(int row, int col) {
         // the flags to indicate whether a piece/board edge is encountered
         boolean upLeftFlag = true;
         boolean upRightFlag = true;
@@ -294,10 +248,96 @@ public class Board {
             // step outward 1 square
             radius++;
         }
+        return squares;
+    }
+
+    /**Calculate possible moves horizontally/vertically from a position.
+     @param row the row location
+     @param col the col location
+     @return the list of squares that can be reached
+     */
+    private ArrayList<Square> calculateCross(int row, int col) {
+        ArrayList<Square> squares = new ArrayList<>();
+        // check up
+        for (int i = row - 1; i >= 0; i--) {
+            // stop checking once a piece is encountered
+            Square s = board[i][col];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check down
+        for (int i = row + 1; i <= 7; i++) {
+            // stop checking once a piece is encountered
+            Square s = board[i][col];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check left
+        for (int i = col - 1; i >= 0; i--) {
+            // stop checking once a piece is encountered
+            Square s = board[row][i];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        // check right
+        for (int i = col + 1; i <= 7; i++) {
+            // stop checking once a piece is encountered
+            Square s = board[row][i];
+            if (s.getPiece() != null) {
+                break;
+            }
+            squares.add(s);
+        }
+        return squares;
+    }
+
+    /**Calculate the possible moves of a Rook piece.
+     A rook can move any length horizontally or vertically (within its current
+     row or column) but it can only pick one direction to move, and cannot move
+     past an occupied space.
+     @param row the row location
+     @param col the col location
+     */
+    private void calculateRook(int row, int col) {
+        ArrayList<Square> squares = calculateCross(row, col);
+        // increment all squares collected
         for (Square s : squares) {
             s.addValue();
         }
+    }
 
+    /**Calculate the possible moves of a Queen piece.
+     A queen can move any length in all 4 cardinal directions as well as diagonally,
+     but cannot cross over a piece.
+     @param row the row location
+     @param col the col location
+     */
+    private void calculateQueen(int row, int col) {
+        ArrayList<Square> diagSquares = calculateDiagonals(row, col);
+        ArrayList<Square> crossSquares = calculateCross(row, col);
+        for (Square s : diagSquares) {
+            s.addValue();
+        }
+        for (Square s : crossSquares) {
+            s.addValue();
+        }
+    }
+
+    /**Calculate the possible moves of a Bishop piece.
+     A bishop can move diagonally from its position, any distance where there
+     is no piece in its path, but it can only travel in one direction per move.
+     */
+    private void calculateBishop(int row, int col) {
+        ArrayList<Square> squares = calculateDiagonals(row, col);
+        for (Square s : squares) {
+            s.addValue();
+        }
     }
 
     /**Set the piece to a square, given the row/col location of the square.
