@@ -30,9 +30,12 @@ public class HelloApplication extends Application {
         Piece rook = new Piece(true, PieceType.ROOK);
         Piece bishop = new Piece(true, PieceType.BISHOP);
         Piece queen = new Piece(true, PieceType.QUEEN);
-        b.setPiece('E', 6, bishop);
-        b.setPiece('C', 4, rook);
-        b.setPiece('D', 5, queen);
+        Piece knight = new Piece(true, PieceType.KNIGHT);
+        b.setPiece('A', 8, knight);
+        b.setPiece('H', 8, knight);
+        b.setPiece('H', 1, knight);
+        b.setPiece('A', 1, knight);
+        b.setPiece('D', 5, knight);
         b.showBoard();
 
         b.reset();
