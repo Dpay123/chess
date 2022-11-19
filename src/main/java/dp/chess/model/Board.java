@@ -116,6 +116,69 @@ public class Board {
             calculateQueen(row, col);
         }
 
+        if (p.getType() == KNIGHT) {
+            calculateKnight(row,col);
+        }
+
+    }
+
+    /**Calculate the possible moves of a Knight piece.
+     A single move of a night consists of a first move in a cardinal direction,
+     followed by a second move in a perpendicular direction. One of the moves must
+     traverse a single square distance, while the other move must traverse 2 squares,
+     but the order does not matter. A knight can traverse over pieces.
+     @param row the int row location
+     @param col the int col location
+     */
+    private void calculateKnight(int row, int col) {
+        ArrayList<Square> squares = new ArrayList<>();
+        // define 4 gutters possible
+        int upRow = row - 2;
+        int downRow = row + 2;
+        int leftCol = col - 2;
+        int rightCol = col + 2;
+        // check upwards move 2 distance
+        if (upRow >= 0) {
+            if (col - 1 >= 0) {
+                squares.add(board[upRow][col-1]);
+            }
+            if (col + 1 <= 7) {
+                squares.add(board[upRow][col+1]);
+            }
+        }
+        // check left move 2 distance
+        if (leftCol >= 0) {
+            if (row - 1 >= 0) {
+                squares.add(board[row-1][leftCol]);
+            }
+            if (row + 1 <= 7) {
+                squares.add(board[row+1][leftCol]);
+            }
+        }
+        // check down move 2 distance
+        if (downRow <= 7) {
+            if (col - 1 >= 0) {
+                squares.add(board[downRow][col-1]);
+            }
+            if (col + 1 <= 7) {
+                squares.add(board[downRow][col+1]);
+            }
+        }
+        // check right move 2 distance
+        if (rightCol <= 7) {
+            if (row - 1 >= 0) {
+                squares.add(board[row-1][rightCol]);
+            }
+            if (row + 1 <= 7) {
+                squares.add(board[row+1][rightCol]);
+            }
+        }
+        // add value to gathered squares if not occupied
+        for (Square s : squares) {
+            if (s.getPiece() == null) {
+                s.addValue();
+            }
+        }
     }
 
     /**Calculate the possible moves of a King piece.
