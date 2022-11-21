@@ -1,6 +1,7 @@
 package dp.chess.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static dp.chess.model.PieceType.*;
 
@@ -73,6 +74,84 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             board[6][i].setPiece(new Piece(true, PAWN));
         }
+    }
+
+    /**Load test data onto board and check for known accuracy.
+     Call this method to set an example board with pieces for both teams.
+     The test data is converted to a string representation of all 64 squares
+     (each square either a value or a char for the piece occupying it) and compared
+     against a string representing the known value of the test data.
+     Prints a statement of whether the test data was correctly calculated or not.
+     NOTE - this should be abstracted as a unit test.
+     */
+    public void setCheckTestData() {
+        // black pieces
+        Piece rookB = new Piece(false, PieceType.ROOK);
+        Piece pawnB = new Piece(false, PieceType.PAWN);
+        Piece bishopB = new Piece(false, PieceType.BISHOP);
+        Piece queenB = new Piece(false, PieceType.QUEEN);
+        Piece knightB = new Piece(false, PieceType.KNIGHT);
+        Piece kingB = new Piece(false, PieceType.KING);
+        this.setPiece('G', 4, knightB);
+        this.setPiece('E', 5, pawnB);
+        this.setPiece('F', 5, bishopB);
+        this.setPiece('B', 6, queenB);
+        this.setPiece('H', 6, pawnB);
+        this.setPiece('A', 7, pawnB);
+        this.setPiece('B', 7, pawnB);
+        this.setPiece('E', 7, bishopB);
+        this.setPiece('A', 8, rookB);
+        this.setPiece('F', 8, rookB);
+        this.setPiece('H', 8, kingB);
+        // white Pieces
+        Piece rookW = new Piece(true, PieceType.ROOK);
+        Piece pawnW = new Piece(true, PieceType.PAWN);
+        Piece bishopW = new Piece(true, PieceType.BISHOP);
+        Piece queenW = new Piece(true, PieceType.QUEEN);
+        Piece knightW = new Piece(true, PieceType.KNIGHT);
+        Piece kingW = new Piece(true, PieceType.KING);
+        this.setPiece('C', 4, bishopW);
+        this.setPiece('A', 3, pawnW);
+        this.setPiece('B', 2, pawnW);
+        this.setPiece('C', 2, pawnW);
+        this.setPiece('D', 2, bishopW);
+        this.setPiece('E', 2, knightW);
+        this.setPiece('F', 2, pawnW);
+        this.setPiece('G', 2, pawnW);
+        this.setPiece('H', 2, pawnW);
+        this.setPiece('A', 1, rookB);
+        this.setPiece('D', 1, queenB);
+        this.setPiece('F', 1, rookW);
+        this.setPiece('G', 1, kingW);
+        System.out.println("Test Data is set");
+
+        // confirm correctness
+        System.out.println("Calculating...");
+        this.checkSquares();
+        // gather squares
+        // build board string representation to compare
+        StringBuilder testStr = new StringBuilder();
+        for (Square[] row : board) {
+            for (Square s : row) {
+                if (s.getPiece() == null) {
+                    testStr.append(s.getValue());
+                }
+                else {
+                    testStr.append(s.getPiece().getSymbol());
+                }
+            }
+        }
+
+        // compare to known list of values of test data
+        String valueStr = "R2342R3KPP11B2123Q12342P3221PB2114B223N2P33231212PPBNPPPR24Q3RK1";
+        if(testStr.toString().equals(valueStr)) {
+            System.out.println("Check Complete...correct!");
+        } else {
+            System.out.println("Error: calculation does not match known test data values");
+            System.out.println("Test Data string: " + testStr);
+            System.out.println("Expected values:  " + valueStr);
+        }
+
     }
 
     /**Check each square on the board, and if a piece is detected,
@@ -177,29 +256,6 @@ public class Board {
         for (Square s : squares) {
             if (s.getPiece() == null) {
                 s.addValue();
-            }
-        }
-    }
-
-    /**Calculate the possible moves of a King piece.
-     A king can move within a one square radius of its position.
-     @param row the int row location of the King
-     @param col the int col location of the King
-     */
-    private void calculateKing(int row, int col) {
-        for (int i = row - 1; i <= row + 1; i++) {
-            // disregard rows not on the board
-            if (i >= 0 && i <= 7) {
-                for (int j = col -1; j <= col + 1; j++) {
-                    // disregard cols not on board
-                    if (j >= 0 && j <= 7) {
-                        Square s = board[i][j];
-                        // if unoccupied, add value
-                        if (s.getPiece() == null) {
-                            s.addValue();
-                        }
-                    }
-                }
             }
         }
     }
@@ -358,6 +414,29 @@ public class Board {
             squares.add(s);
         }
         return squares;
+    }
+
+    /**Calculate the possible moves of a King piece.
+     A king can move within a one square radius of its position.
+     @param row the int row location of the King
+     @param col the int col location of the King
+     */
+    private void calculateKing(int row, int col) {
+        for (int i = row - 1; i <= row + 1; i++) {
+            // disregard rows not on the board
+            if (i >= 0 && i <= 7) {
+                for (int j = col -1; j <= col + 1; j++) {
+                    // disregard cols not on board
+                    if (j >= 0 && j <= 7) {
+                        Square s = board[i][j];
+                        // if unoccupied, add value
+                        if (s.getPiece() == null) {
+                            s.addValue();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**Calculate the possible moves of a Rook piece.
