@@ -1,6 +1,7 @@
 package dp.chess;
 
 import dp.chess.model.Board;
+import dp.chess.model.GUI;
 import dp.chess.model.Piece;
 import dp.chess.model.PieceType;
 import javafx.application.Application;
@@ -25,21 +26,8 @@ public class HelloApplication extends Application {
      */
     public static void main(String[] args) {
 
-        Board b = new Board();
-        Piece pawn = new Piece(true, PieceType.PAWN);
-        Piece rook = new Piece(true, PieceType.ROOK);
-        Piece bishop = new Piece(true, PieceType.BISHOP);
-        Piece queen = new Piece(true, PieceType.QUEEN);
-        Piece knight = new Piece(true, PieceType.KNIGHT);
-        b.setPiece('A', 8, knight);
-        b.setPiece('H', 8, knight);
-        b.setPiece('H', 1, knight);
-        b.setPiece('A', 1, knight);
-        b.setPiece('D', 5, knight);
-        b.showBoard();
-
-        b.reset();
-        b.showBoard();
+        GUI gui = new GUI();
+        gui.start();
 
 //        launch();
     }
